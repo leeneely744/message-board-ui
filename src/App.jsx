@@ -41,7 +41,10 @@ function App() {
       <h1>MessageBoard</h1>
 
       {account ? (
-        <p>接続済みアカウント: {account}</p>
+        <>
+          <p>接続済みアカウント: {account}</p>
+          <button onClick={fetchMessages}>最新メッセージを取得</button>
+        </>
       ) : (
         <button onClick={connectWallet}>ウォレット接続</button>
       )}
