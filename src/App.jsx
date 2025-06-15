@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { ethers } from "ethers";
+import contractInfo from './contract-address.json';
 
-import { CONTRACT_ADDRESS, CONTRACT_ABI } from './contract';
+import { CONTRACT_ABI } from './contract';
+const CONTRACT_ADDRESS = contractInfo.address;
 
 function App() {
   const [account, setAccount] = useState(null);
