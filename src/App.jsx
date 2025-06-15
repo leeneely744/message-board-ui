@@ -8,6 +8,7 @@ const CONTRACT_ADDRESS = contractInfo.address;
 function App() {
   const [account, setAccount] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
 
   const connectWallet = async () => {
     if (!window.ethereum) {
@@ -46,6 +47,13 @@ function App() {
         <>
           <p>接続済みアカウント: {account}</p>
           <button onClick={fetchMessages}>最新メッセージを取得</button>
+          <input
+            type="text"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            placeholder="input message"
+          />
+          <button onClick={postMessage}>投稿する</button>
           <ul>
             {messages.map((msg, index) => (
               <li key={index}>{msg.text} at {new Date(Number(msg.timestamp) * 1000).toLocaleString()}</li>
