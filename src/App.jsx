@@ -1,7 +1,7 @@
-import { use, useEffect, useState } from "react";
+import { useState } from "react";
 import { ethers } from "ethers";
 
-import { abi, CONTRACT_ADDRESS, CONTRACT_ABI } from './contract';
+import { CONTRACT_ADDRESS, CONTRACT_ABI } from './contract';
 
 function App() {
   const [account, setAccount] = useState(null);
@@ -44,6 +44,11 @@ function App() {
         <>
           <p>接続済みアカウント: {account}</p>
           <button onClick={fetchMessages}>最新メッセージを取得</button>
+          <ul>
+            {messages.map((msg, index) => (
+              <li key={index}>{msg.text} at {new Date(Number(msg.timestamp) * 1000).toLocaleString()}</li>
+            ))}
+          </ul>
         </>
       ) : (
         <button onClick={connectWallet}>ウォレット接続</button>
