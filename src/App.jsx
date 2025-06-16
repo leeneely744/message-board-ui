@@ -36,6 +36,10 @@ function App() {
     );
 
     const newMessages = await messageBoardContract.getLatestMessages(5);
+    if (newMessages.length === 0) {
+      alert("メッセージが存在しません");
+      return;
+    }
     setMessages(newMessages);
   }
 
