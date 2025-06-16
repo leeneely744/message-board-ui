@@ -41,6 +41,7 @@ function App() {
       return;
     }
     setMessages(newMessages);
+    setNewMessage("");
   }
 
   const postMessage = async () => {
