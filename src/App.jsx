@@ -41,7 +41,6 @@ function App() {
       return;
     }
     setMessages(newMessages);
-    setNewMessage("");
   }
 
   const postMessage = async () => {
@@ -58,6 +57,7 @@ function App() {
 
       const tx = await contract.postMessage(newMessage);
       await tx.wait();
+      setNewMessage("");
     } catch (error) {
       console.error("投稿失敗: ", err);
       alert("投稿に失敗しました。");
