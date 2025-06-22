@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ethers } from "ethers";
+import { ethers, formatEther } from "ethers";
 import contractInfo from './contract-address.json';
 
 import { CONTRACT_ABI } from './contract';
@@ -62,12 +62,29 @@ function App() {
         value: ethers.parseEther(tipEth)
       });
       await tx.wait();
+
+      await updateTotalTips();
+      await fetchMessages();
       setNewMessage("");
     } catch (err) {
       console.error("投稿失敗: ", err);
       alert("投稿に失敗しました。");
     }
   };
+
+  const updateTotalTips = async () => {
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const contract = new ethers.Contract(
+      CONTRACT_ADDRESS,
+      CONTRACT_ABI,
+      provider
+    );
+
+    // totalTip: 自動生成された getter
+    const raw = await contract.totalTip();
+    const eth = formatEther(raw);
+    setTips(eth);
+  }
 
   return (
     <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
