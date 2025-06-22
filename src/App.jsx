@@ -9,6 +9,8 @@ function App() {
   const [account, setAccount] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [tips, setTips] = useState(0);
+  const [tipEth, setTipEth] = useState("0.01");
 
   const connectWallet = async () => {
     if (!window.ethereum) {
@@ -41,7 +43,7 @@ function App() {
       return;
     }
     setMessages(newMessages);
-  }
+  };
 
   const postMessage = async () => {
     if (!newMessage) {
@@ -55,10 +57,13 @@ function App() {
 
       const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
-      const tx = await contract.postMessage(newMessage);
+      // transaction overrides: https://docs.ethers.org/v5/api/contract/contract/#Contract-functionsCall
+      const tx = await contract.postMessage(newMessage, {
+        value: ethers.parseEther(tipEth)
+      });
       await tx.wait();
       setNewMessage("");
-    } catch (error) {
+    } catch (err) {
       console.error("投稿失敗: ", err);
       alert("投稿に失敗しました。");
     }
@@ -72,6 +77,14 @@ function App() {
         <>
           <p>接続済みアカウント: {account}</p>
           <input
+            type="number"
+            step="0.01"
+            value={tipEth}
+            onChange={e => setTipEth(e.target.value)}
+            placeholder="tip ETH"
+          />
+          <br/>
+          <input
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
@@ -79,6 +92,7 @@ function App() {
           />
           <button onClick={postMessage}>投稿する</button>
           <br/>
+          <p>合計Tips: {tips} ETH</p>
           <button onClick={fetchMessages}>最新メッセージを取得</button>
           <ul>
             {messages.map((msg, index) => (
