@@ -7,6 +7,7 @@ const CONTRACT_ADDRESS = contractInfo.address;
 
 function App() {
   const [account, setAccount] = useState(null);
+  const [messageBoardContract, setMessageBoardContract] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [tips, setTips] = useState(0);
@@ -23,20 +24,28 @@ function App() {
         method: "eth_requestAccounts",
       });
       setAccount(accounts[0]);
+      
+      // ethers.js を使ってコントラクトを初期化
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer   = await provider.getSigner();
+      const newContract = new ethers.Contract(
+        CONTRACT_ADDRESS,
+        CONTRACT_ABI,
+        signer
+      );
+      setMessageBoardContract(newContract);
+
+      // account / chain 変更でリセット
+      window.ethereum.on("accountsChanged", () => {
+        setAccount(null);
+        setMessageBoardContract(null);
+      });
     } catch (err) {
       console.error("接続エラー:", err);
     }
   };
   
   const fetchMessages = async () => {
-    // ethers.js を使ってコントラクトを初期化
-    const provider = new ethers.BrowserProvider(window.ethereum);
-    const messageBoardContract = new ethers.Contract(
-      CONTRACT_ADDRESS,
-      CONTRACT_ABI,
-      provider
-    );
-
     const newMessages = await messageBoardContract.getLatestMessages(5);
     if (newMessages.length === 0) {
       alert("メッセージが存在しません");
@@ -52,11 +61,6 @@ function App() {
     }
     
     try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-
-      const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-
       // transaction overrides: https://docs.ethers.org/v5/api/contract/contract/#Contract-functionsCall
       const tx = await contract.postMessage(newMessage, {
         value: ethers.parseEther(tipEth)
@@ -73,15 +77,10 @@ function App() {
   };
 
   const updateTotalTips = async () => {
-    const provider = new ethers.BrowserProvider(window.ethereum);
-    const contract = new ethers.Contract(
-      CONTRACT_ADDRESS,
-      CONTRACT_ABI,
-      provider
-    );
-
+    if (!messageBoardContract) return;
+    
     // totalTip: 自動生成された getter
-    const raw = await contract.totalTip();
+    const raw = await messageBoardContract.totalTip();
     const eth = formatEther(raw);
     setTips(eth);
   }
