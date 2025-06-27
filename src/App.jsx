@@ -5,6 +5,8 @@ import contractInfo from './contract-address.json';
 import { CONTRACT_ABI } from './contract';
 const CONTRACT_ADDRESS = contractInfo.address;
 
+import { Message } from "./Message";
+
 function App() {
   const [account, setAccount] = useState(null);
   const [messageBoardContract, setMessageBoardContract] = useState(null);
@@ -112,7 +114,7 @@ function App() {
           <button onClick={fetchMessages}>最新メッセージを取得</button>
           <ul>
             {messages.map((msg, index) => (
-              <li key={index}>{msg.text} at {new Date(Number(msg.timestamp) * 1000).toLocaleString()}</li>
+              <Message index={index} message={msg.text} timestamp={msg.timestamp} isAuthor={true} />
             ))}
           </ul>
         </>
