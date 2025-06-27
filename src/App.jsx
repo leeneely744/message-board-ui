@@ -64,7 +64,7 @@ function App() {
     
     try {
       // transaction overrides: https://docs.ethers.org/v5/api/contract/contract/#Contract-functionsCall
-      const tx = await contract.postMessage(newMessage, {
+      const tx = await messageBoardContract.postMessage(newMessage, {
         value: ethers.parseEther(tipEth)
       });
       await tx.wait();
