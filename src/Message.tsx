@@ -1,11 +1,17 @@
-export function Message({ index, message, timestamp, isAuthor }) {
+export function Message({
+    message,
+    timestamp,
+    isAuthor,
+    handleEdit,
+    handleDelete,
+}) {
     var tsForLi = "at " + new Date(Number(timestamp) * 1000).toLocaleString();
     return (
-        <li key={index}>
+        <li>
             {message} {tsForLi} {isAuthor && 
                 <>
-                    <button>Edit</button>
-                    <button>Delete</button>
+                    <button type="button" onClick={()=>{console.log("hello")}}>Edit</button>
+                    <button type="button" onClick={handleDelete}>Delete</button>
                 </>
             }
         </li>

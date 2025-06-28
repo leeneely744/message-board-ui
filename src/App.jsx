@@ -114,7 +114,14 @@ function App() {
           <button onClick={fetchMessages}>最新メッセージを取得</button>
           <ul>
             {messages.map((msg, index) => (
-              <Message index={index} message={msg.text} timestamp={msg.timestamp} isAuthor={true} />
+              <Message
+                key={index}
+                message={msg.text}
+                timestamp={msg.timestamp}
+                isAuthor={true}
+                handleEdit={() => {alert("Edit")}}
+                handleDelete={() => {alert("Delete")}}
+              />
             ))}
           </ul>
         </>
