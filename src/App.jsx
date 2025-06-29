@@ -94,7 +94,7 @@ function App() {
   const [openedDialog, setOpenedDialog] = useState(dialogTypes.none);
 
   const onClickEdit = (id) => {
-    setEditingMessage(messages[id]);
+    setEditingMessage(messages[id].text);
     setOpenedDialog(dialogTypes.edit);
   }
 
@@ -138,8 +138,11 @@ function App() {
           {openedDialog == dialogTypes.edit &&
             <dialog id="edit-modal" open>
               <h2>編集</h2>
-              <input placeholder={editingMessage}></input>
-              <button onClick={()=>{console.log("キャンセル")}}>キャンセル</button>
+              <input value={editingMessage}
+                onChange={(e) => setEditingMessage(e.target.value)}
+              ></input>
+              <br/>
+              <button onClick={()=>{setOpenedDialog(dialogTypes.none)}}>キャンセル</button>
               <button onClick={()=>{console.log("確定")}}>確定</button>
             </dialog>
           }
