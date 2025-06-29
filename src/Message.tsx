@@ -10,7 +10,7 @@ export function Message({
         <li>
             {message} {tsForLi} {isAuthor && 
                 <>
-                    <button type="button" onClick={()=>{console.log("hello")}}>Edit</button>
+                    <button type="button" onClick={handleEdit}>Edit</button>
                     <button type="button" onClick={handleDelete}>Delete</button>
                 </>
             }

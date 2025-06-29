@@ -14,6 +14,7 @@ function App() {
   const [newMessage, setNewMessage] = useState("");
   const [tips, setTips] = useState(0);
   const [tipEth, setTipEth] = useState("0.01");
+  const [editingMessage, setEditingMessage] = useState("");
 
   const connectWallet = async () => {
     if (!window.ethereum) {
@@ -87,6 +88,16 @@ function App() {
     setTips(eth);
   }
 
+  const dialogTypes = {
+    none: "none", edit: "edit", delete: "delete"
+  };
+  const [openedDialog, setOpenedDialog] = useState(dialogTypes.none);
+
+  const onClickEdit = (id) => {
+    setEditingMessage(messages[id]);
+    setOpenedDialog(dialogTypes.edit);
+  }
+
   return (
     <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
       <h1>MessageBoard</h1>
@@ -119,11 +130,19 @@ function App() {
                 message={msg.text}
                 timestamp={msg.timestamp}
                 isAuthor={true}
-                handleEdit={() => {alert("Edit")}}
-                handleDelete={() => {alert("Delete")}}
+                handleEdit={() => onClickEdit(index)}
+                handleDelete={() => {console.log("Delete")}}
               />
             ))}
           </ul>
+          {openedDialog == dialogTypes.edit &&
+            <dialog id="edit-modal" open>
+              <h2>編集</h2>
+              <input placeholder={editingMessage}></input>
+              <button onClick={()=>{console.log("キャンセル")}}>キャンセル</button>
+              <button onClick={()=>{console.log("確定")}}>確定</button>
+            </dialog>
+          }
         </>
       ) : (
         <button onClick={connectWallet}>ウォレット接続</button>
