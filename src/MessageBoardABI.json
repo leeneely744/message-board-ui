@@ -149,6 +149,11 @@
     "name": "getLatestMessages",
     "outputs": [
       {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      },
+      {
         "components": [
           {
             "internalType": "address",

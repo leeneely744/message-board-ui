@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { use, useState } from "react";
 import { ethers, formatEther } from "ethers";
 import contractInfo from './contract-address.json';
 
@@ -10,11 +10,12 @@ import { Message } from "./Message";
 function App() {
   const [account, setAccount] = useState(null);
   const [messageBoardContract, setMessageBoardContract] = useState(null);
+
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+
   const [tips, setTips] = useState(0);
   const [tipEth, setTipEth] = useState("0.01");
-  const [editingMessage, setEditingMessage] = useState("");
 
   const connectWallet = async () => {
     if (!window.ethereum) {
@@ -49,12 +50,20 @@ function App() {
   };
   
   const fetchMessages = async () => {
-    const newMessages = await messageBoardContract.getLatestMessages(5);
+    const [ids, newMessages] = await messageBoardContract.getLatestMessages(5);
     if (newMessages.length === 0) {
       alert("メッセージが存在しません");
       return;
     }
-    setMessages(newMessages);
+
+    const msgWithId = newMessages.map((message, index) => ({
+      id: ids[index],
+      text: message.text,
+      sender: message.sender,
+      timestamp: message.timestamp,
+      deleted: message.deleted,
+    }))
+    setMessages(msgWithId);
   };
 
   const postMessage = async () => {
@@ -93,10 +102,31 @@ function App() {
   };
   const [openedDialog, setOpenedDialog] = useState(dialogTypes.none);
 
+  const [editingMessage, setEditingMessage] = useState("");
+  const [editingMessageId, setEditingMessageId] = useState();
   const onClickEdit = (id) => {
     setEditingMessage(messages[id].text);
+    setEditingMessageId(messages[id].id)
     setOpenedDialog(dialogTypes.edit);
-  }
+  };
+
+  const confirmEditMessage = async () => {
+    if (!editingMessage) {
+      alert("メッセージが空です。");
+      return;
+    }
+
+    try {
+      const tx = await messageBoardContract.editMessage(editingMessageId, editingMessage);
+      await tx.wait();
+
+      await fetchMessages();
+      setOpenedDialog(dialogTypes.none);
+    } catch (err) {
+      console.error("編集失敗: ", err);
+      alert("編集に失敗しました。");
+    }
+  };
 
   return (
     <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
@@ -143,7 +173,7 @@ function App() {
               ></input>
               <br/>
               <button onClick={()=>{setOpenedDialog(dialogTypes.none)}}>キャンセル</button>
-              <button onClick={()=>{console.log("確定")}}>確定</button>
+              <button onClick={confirmEditMessage}>確定</button>
             </dialog>
           }
         </>
