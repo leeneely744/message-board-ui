@@ -128,12 +128,19 @@ function App() {
     }
   };
 
-  const [deleteTargetId, setDeleteTargetId] = useState();
-  const onClickDelete = (id) => {
-    setDeleteTargetId(id);
+  const onClickDelete = async (id) => {
     const targetMessage = messages[id].text;
-    window.confirm(`本当に「${targetMessage}」を削除しますか？`)
-  }
+    if (window.confirm(`本当に「${targetMessage}」を削除しますか？`)) {
+      try {
+        const tx = await messageBoardContract.deleteMessage(messages[id].id);
+        await tx.wait();
+
+        await fetchMessages();
+      } catch (err) {
+        console.error("削除失敗: ", err);
+      }
+    }
+  };
 
   return (
     <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
@@ -168,7 +175,7 @@ function App() {
                 timestamp={msg.timestamp}
                 isAuthor={true}
                 handleEdit={() => onClickEdit(index)}
-                handleDelete={() => {onClickDelete(index)}}
+                handleDelete={() => onClickDelete(index)}
               />
             ))}
           </ul>
