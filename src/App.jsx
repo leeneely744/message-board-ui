@@ -128,6 +128,13 @@ function App() {
     }
   };
 
+  const [deleteTargetId, setDeleteTargetId] = useState();
+  const onClickDelete = (id) => {
+    setDeleteTargetId(id);
+    const targetMessage = messages[id].text;
+    window.confirm(`本当に「${targetMessage}」を削除しますか？`)
+  }
+
   return (
     <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
       <h1>MessageBoard</h1>
@@ -161,7 +168,7 @@ function App() {
                 timestamp={msg.timestamp}
                 isAuthor={true}
                 handleEdit={() => onClickEdit(index)}
-                handleDelete={() => {console.log("Delete")}}
+                handleDelete={() => {onClickDelete(index)}}
               />
             ))}
           </ul>
